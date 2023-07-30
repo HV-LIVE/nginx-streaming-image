@@ -124,7 +124,7 @@
 
 # 功能缺陷
 
-## Nginx 开启多个 Worker 进程会导致无法使用 RTMP 协议播放
+## `Nginx` 开启多个 `Worker` 进程会导致无法使用 RTMP 协议播放
 - 虽然 `nginx-rtmp-module` 提供了 `rtmp_auto_push` 等配置项，但实际依然无法正常工作
 - 怀疑可能是 Nginx 版本太高的问题
 
@@ -134,3 +134,5 @@
 
 ## 点播不支持 `MPEG-TS` 格式
 - [参考问题](https://github.com/kaltura/nginx-vod-module/issues/1036)
+
+## 暂不支持 `HTTPS`
