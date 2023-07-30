@@ -131,3 +131,6 @@
 ## 直播延迟在 30 ~ 90 秒左右
 - 参考网上配置了 `hls_fragment` 和 `hls_playlist_length` 等配置项，但效果不明显
 - 怀疑可能是缺少关键帧，[类似问题](https://github.com/arut/nginx-rtmp-module/issues/1026#issuecomment-302059909)
+
+## 点播不支持 `MPEG-TS` 格式
+- [参考问题](https://github.com/kaltura/nginx-vod-module/issues/1036)
