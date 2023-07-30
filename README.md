@@ -21,7 +21,7 @@
 
 - 目录挂载
 
-  - 点播资源目录: 用于存放用于点播的资源文件。容器目录为 `/vod-res`
+  - 点播资源目录: 用于存放点播的资源文件。容器目录为 `/vod-res`
 
 - 高级配置
 
@@ -71,13 +71,13 @@
 
 - 播放地址
   - 完整地址为 `http://{server-ip}:8801/live-hls/{name}/index.m3u8`
-  - `{name}` 同 `RTMP 直播推流与播放` 中的 `{name}`
+  - `{name}` 同 [RTMP 直播推流与播放](#rtmp-直播推流与播放) 中的 `{name}`
 
 ## DASH 直播
 
 - 播放地址
   - 完整地址为 `http://{server-ip}:8801/live-dash/{name}/index.mpd`
-  - `{name}` 同 `RTMP 直播推流与播放` 中的 `{name}`
+  - `{name}` 同 [RTMP 直播推流与播放](#rtmp-直播推流与播放) 中的 `{name}`
 
 ## 查看统计
 
@@ -100,7 +100,7 @@
 
 - 播放地址
   - 完整地址为 `http://{server-ip}:8802/vod-dash/{vod_res_path}/manifest.mpd`
-  - 注意结尾是 `manifest.mpd`
+  - **注意结尾是 `manifest.mpd`**
 
 ## 查看统计
 
