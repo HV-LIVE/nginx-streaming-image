@@ -1,3 +1,4 @@
+import configparser
 import os
 import shutil
 from typing import Dict
@@ -26,6 +27,13 @@ def load_env_vars() -> Dict[str, str]:
             continue
         key = env[len('HV_'):].upper()
         result[key] = os.environ[env]
+    config_file = '/etc/launcher/config.ini' if RELEASE else './.debug/config.ini'
+    if os.path.exists(config_file):
+        config = configparser.ConfigParser()
+        config.read(config_file)
+        if 'ENV' in config:
+            for key in config['ENV']:
+                result[key.upper()] = config['ENV'][key]
     return result
 
 
