@@ -14,6 +14,7 @@ cleanup_files = [
 
 template_files = [
     'etc/nginx/nginx.conf',
+    'etc/nginx/ffmpeg_dash.sh',
     'etc/nginx/snippet.d/rtmp.conf',
     'etc/nginx/snippet.d/http_live.conf',
     'etc/nginx/snippet.d/http_vod.conf',
@@ -34,6 +35,9 @@ def load_env_vars() -> Dict[str, str]:
         if 'ENV' in config:
             for key in config['ENV']:
                 result[key.upper()] = config['ENV'][key]
+        if 'ENV_LIST' in config:
+            for key in config['ENV_LIST']:
+                result[key.upper()] = list(filter(None, config['ENV_LIST'][key].split('\n')))
     return result
 
 
