@@ -91,6 +91,7 @@
 
 - 配置 FFmpeg 参数
 
+  - 参考 [官方文档](https://ffmpeg.org/ffmpeg-all.html#dash-2)
   - 编辑 `{启动配置目录}/config.ini` 文件
   - 添加或修改如下内容（**重启容器后生效**）
 
