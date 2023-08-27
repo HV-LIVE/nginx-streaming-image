@@ -87,6 +87,8 @@
 
 ## 使用 FFmpeg 转 DASH
 
+- FFmpeg 版本: `6.0`
+
 - 配置 FFmpeg 参数
 
   - 编辑 `{启动配置目录}/config.ini` 文件
