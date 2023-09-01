@@ -14,7 +14,8 @@ cleanup_files = [
 
 template_files = [
     'etc/nginx/nginx.conf',
-    'etc/nginx/ffmpeg_dash.sh',
+    'etc/nginx/live_ffmpeg_dash.sh',
+    'etc/nginx/vod_ffmpeg_dash.sh',
     'etc/nginx/snippet.d/rtmp.conf',
     'etc/nginx/snippet.d/http_live.conf',
     'etc/nginx/snippet.d/http_vod.conf',

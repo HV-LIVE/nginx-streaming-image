@@ -85,7 +85,7 @@
 
 - 统计地址为 `http://{server-ip}:8801/live-stat/`
 
-## 使用 FFmpeg 转 DASH
+## 使用 FFmpeg 转 DASH 直播
 
 - FFmpeg 版本: `6.0`
 
@@ -97,23 +97,29 @@
 
     ```ini
     [ENV_LIST]
-    FFMPEG_DASH_OPTS =
+    LIVE_FFMPEG_DASH_OPTS =
         # 001
         -c copy
         # 002
         -c copy -window_size 10 -use_template 0 -use_timeline 0
         # 003
         -c copy -window_size 10 -use_template 1 -use_timeline 1
-        # 004 无法播放
+        # 004
         -c copy -window_size 10 -use_template 1 -use_timeline 0
         # 005
         -c copy -window_size 10 -use_template 0 -use_timeline 1
+        # 006
+        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 2500k -s 1280x720 -preset superfast -profile:v baseline
+        # 007
+        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 1000k -s 854x480 -preset superfast -profile:v baseline
+        # 008
+        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 750k -s 640x360 -preset superfast -profile:v baseline
     ```
 
 - 播放地址
   - 完整地址为 `http://{server-ip}:8801/live-ffmpeg-dash/{name}/{index}/manifest.mpd`
   - `{name}` 同 [RTMP 直播推流与播放](#rtmp-直播推流与播放) 中的 `{name}`
-  - `{index}` 对应 `FFMPEG_DASH_OPTS` 中的位置，从 `1` 开始，不满 `3位数` 前边补`0`
+  - `{index}` 对应 `LIVE_FFMPEG_DASH_OPTS` 中的位置，从 `1` 开始，不满 `3位数` 前边补`0`
 
 # 点播
 
@@ -137,6 +143,60 @@
 ## 查看统计
 
 - 统计地址为 `http://{server-ip}:8802/vod-stat/`
+
+## 使用 FFmpeg 转 DASH 点播
+
+- FFmpeg 版本: `6.0`
+
+- 配置 FFmpeg 参数
+
+  - 参考 [官方文档](https://ffmpeg.org/ffmpeg-all.html#dash-2)
+  - 编辑 `{启动配置目录}/config.ini` 文件
+  - 添加或修改如下内容
+
+    ```ini
+    [ENV_LIST]
+    VOD_FFMPEG_DASH_OPTS =
+        # 001
+        -c copy
+        # 002
+        -c copy -window_size 10 -use_template 0 -use_timeline 0
+        # 003
+        -c copy -window_size 10 -use_template 1 -use_timeline 1
+        # 004
+        -c copy -window_size 10 -use_template 1 -use_timeline 0
+        # 005
+        -c copy -window_size 10 -use_template 0 -use_timeline 1
+        # 006
+        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 2500k -s 1280x720 -preset superfast -profile:v baseline
+        # 007
+        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 1000k -s 854x480 -preset superfast -profile:v baseline
+        # 008
+        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 750k -s 640x360 -preset superfast -profile:v baseline
+    ```
+
+- 生成点播文件
+
+  - 进入容器
+
+    ```bash
+    docker exec -it {容器名称或id} bash
+    ```
+
+  - 容器内执行命令
+
+    ```bash
+    # 使配置文件生效
+    python3 "/opt/launcher/setup.py"
+
+    # 生成点播文件
+    bash /etc/nginx/vod_ffmpeg_dash.sh "{name}" "{full_vod_res_path}"
+    ```
+
+- 播放地址
+  - 完整地址为 `http://{server-ip}:8802/vod-ffmpeg-dash/{name}/{index}/manifest.mpd`
+  - `{name}` 同 `vod_ffmpeg_dash.sh` 命令中的 `{name}`
+  - `{index}` 对应 `VOD_FFMPEG_DASH_OPTS` 中的位置，从 `1` 开始，不满 `3位数` 前边补`0`
 
 # 配置列表
 
