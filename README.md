@@ -97,23 +97,24 @@
 
     ```ini
     [ENV_LIST]
-    LIVE_FFMPEG_DASH_OPTS =
+    LIVE_FFMPEG_DASH_OPTIONS =
         # 001
-        -c copy
+        -c copy -window_size 10 -extra_window_size 10
         # 002
-        -c copy -window_size 10 -use_template 0 -use_timeline 0
+        -c copy -window_size 10 -extra_window_size 10 -use_template 0 -use_timeline 0
         # 003
-        -c copy -window_size 10 -use_template 1 -use_timeline 1
+        -c copy -window_size 10 -extra_window_size 10 -use_template 1 -use_timeline 1
         # 004
-        -c copy -window_size 10 -use_template 1 -use_timeline 0
+        -c copy -window_size 10 -extra_window_size 10 -use_template 1 -use_timeline 0
         # 005
-        -c copy -window_size 10 -use_template 0 -use_timeline 1
+        -c copy -window_size 10 -extra_window_size 10 -use_template 0 -use_timeline 1
         # 006
-        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 2500k -s 1280x720 -preset superfast -profile:v baseline
-        # 007
-        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 1000k -s 854x480 -preset superfast -profile:v baseline
-        # 008
-        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 750k -s 640x360 -preset superfast -profile:v baseline
+        -map 0:a -c:a aac -b:a 128k \
+        -map 0:v -c:v:0 libx264 -b:v:0 5000k -s:v:0 1920x1080 -profile:v:0 baseline \
+        -map 0:v -c:v:1 libx264 -b:v:1 2500k -s:v:1 1280x720 -profile:v:1 baseline \
+        -map 0:v -c:v:2 libx264 -b:v:2 1000k -s:v:2 640x480 -profile:v:2 baseline \
+        -adaptation_sets "id=0,streams=v id=1,streams=a" \
+        -window_size 10 -extra_window_size 10
     ```
 
 - 播放地址
@@ -156,23 +157,13 @@
 
     ```ini
     [ENV_LIST]
-    VOD_FFMPEG_DASH_OPTS =
+    VOD_FFMPEG_DASH_OPTIONS =
         # 001
-        -c copy
-        # 002
-        -c copy -window_size 10 -use_template 0 -use_timeline 0
-        # 003
-        -c copy -window_size 10 -use_template 1 -use_timeline 1
-        # 004
-        -c copy -window_size 10 -use_template 1 -use_timeline 0
-        # 005
-        -c copy -window_size 10 -use_template 0 -use_timeline 1
-        # 006
-        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 2500k -s 1280x720 -preset superfast -profile:v baseline
-        # 007
-        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 1000k -s 854x480 -preset superfast -profile:v baseline
-        # 008
-        -c:a libfdk_aac -b:a 128k -c:v libx264 -b:v 750k -s 640x360 -preset superfast -profile:v baseline
+        -map 0:a -c:a aac -b:a 128k \
+        -map 0:v -c:v:0 libx264 -b:v:0 5000k -s:v:0 1920x1080 -profile:v:0 baseline \
+        -map 0:v -c:v:1 libx264 -b:v:1 2500k -s:v:1 1280x720 -profile:v:1 baseline \
+        -map 0:v -c:v:2 libx264 -b:v:2 1000k -s:v:2 640x480 -profile:v:2 baseline \
+        -adaptation_sets "id=0,streams=v id=1,streams=a"
     ```
 
 - 生成点播文件
@@ -187,10 +178,15 @@
 
     ```bash
     # 使配置文件生效
-    python3 "/opt/launcher/setup.py"
+    cd /opt/launcher && python3 "/opt/launcher/setup.py"
 
     # 生成点播文件
-    bash /etc/nginx/vod_ffmpeg_dash.sh "{name}" "{full_vod_res_path}"
+    # 由于执行时间可能会很长，这里使用后台执行
+    nohup bash /etc/nginx/vod_ffmpeg_dash.sh {name} "/vod-res/{vod_res_path}" > /var/log/vod_ffmpeg_dash_{name}.log &
+
+    # 查看生成进度
+    tail -f /var/log/vod_ffmpeg_dash_{name}.log
+    cat /var/log/vod_ffmpeg_dash_{name}.log | grep "generate "
     ```
 
 - 播放地址
@@ -205,10 +201,10 @@
 | HV_LIVE_ENABLE               | true   | 是否开启直播功能     |
 | HV_LIVE_RTMP_PORT            | 1935   | 直播 RTMP 端口       |
 | HV_LIVE_HTTP_PORT            | 8801   | 直播 HTTP 端口       |
-| HV_LIVE_HLS_FRAGMENT         | 2s     | HLS 分片的长度       |
-| HV_LIVE_HLS_PLAYLIST_LENGTH  | 10s    | HLS 播放列表的长度   |
-| HV_LIVE_DASH_FRAGMENT        | 2s     | DASH 分片的长度      |
-| HV_LIVE_DASH_PLAYLIST_LENGTH | 10s    | DASH 播放列表的长度  |
+| HV_LIVE_HLS_FRAGMENT         | 10s    | HLS 分片的长度       |
+| HV_LIVE_HLS_PLAYLIST_LENGTH  | 40s    | HLS 播放列表的长度   |
+| HV_LIVE_DASH_FRAGMENT        | 10s    | DASH 分片的长度      |
+| HV_LIVE_DASH_PLAYLIST_LENGTH | 40s    | DASH 播放列表的长度  |
 | HV_LIVE_STAT                 | true   | 是否开启直播统计功能 |
 | HV_VOD_ENABLE                | true   | 是否开启点播功能     |
 | HV_VOD_HTTP_PORT             | 8802   | 点播 HTTP 端口       |

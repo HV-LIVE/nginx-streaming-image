@@ -12,11 +12,15 @@ outputDir="/vod-res/ffmpeg-dash/$name"
 rm -rf "$outputDir"
 mkdir -p "$outputDir"
 
-{% if VOD_FFMPEG_DASH_OPTS is defined %}
-{% for opts in VOD_FFMPEG_DASH_OPTS %}
+{% if VOD_FFMPEG_DASH_OPTIONS is defined %}
+{% for opts in VOD_FFMPEG_DASH_OPTIONS %}
+{% if opts == '@deprecated' %}
+echo "generate {{ '%03d' % loop.index }} is deprecated"
+{% else %}
 echo "generate to $outputDir/{{ '%03d' % loop.index }}"
 mkdir -p "$outputDir/{{ '%03d' % loop.index }}"
 ffmpeg -i "$file" -f dash {{ opts }} "$outputDir/{{ '%03d' % loop.index }}/manifest.mpd"
+{% endif %}
 {% endfor %}
 {% endif %}
 
