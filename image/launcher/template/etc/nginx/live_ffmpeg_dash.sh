@@ -18,8 +18,9 @@ mkdir -p "$outputDir"
 {% if opts == '@deprecated' %}
 # generate {{ '%03d' % loop.index }} is deprecated
 {% else %}
-mkdir -p "$outputDir/{{ '%03d' % loop.index }}"
-ffmpeg -i "rtmp://localhost:{{LIVE_RTMP_PORT}}/live/$name" -f dash {{ opts }} "$outputDir/{{ '%03d' % loop.index }}/manifest.mpd" &
+outputSubDir="$outputDir/{{ '%03d' % loop.index }}"
+mkdir -p "$outputSubDir"
+ffmpeg -i "rtmp://localhost:{{LIVE_RTMP_PORT}}/live/$name" -f dash {{ opts }} "$outputSubDir/manifest.mpd" >$outputSubDir/ffmpeg.log 2>&1 &
 {% endif %}
 {% endfor %}
 {% endif %}

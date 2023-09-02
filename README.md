@@ -192,7 +192,7 @@
 
     # 生成点播文件
     # 由于执行时间可能会很长，这里使用后台执行
-    nohup bash /etc/nginx/vod_ffmpeg_dash.sh {name} "/vod-res/{vod_res_path}" > /var/log/vod_ffmpeg_dash_{name}.log &
+    nohup bash /etc/nginx/vod_ffmpeg_dash.sh {name} "/vod-res/{vod_res_path}" >/var/log/vod_ffmpeg_dash_{name}.log 2>&1 &
 
     # 查看生成进度
     tail -f /var/log/vod_ffmpeg_dash_{name}.log
@@ -213,8 +213,8 @@
 | HV_LIVE_HTTP_PORT            | 8801   | 直播 HTTP 端口       |
 | HV_LIVE_HLS_FRAGMENT         | 10s    | HLS 分片的长度       |
 | HV_LIVE_HLS_PLAYLIST_LENGTH  | 40s    | HLS 播放列表的长度   |
-| HV_LIVE_DASH_FRAGMENT        | 10s    | DASH 分片的长度      |
-| HV_LIVE_DASH_PLAYLIST_LENGTH | 40s    | DASH 播放列表的长度  |
+| HV_LIVE_DASH_FRAGMENT        | 2s     | DASH 分片的长度      |
+| HV_LIVE_DASH_PLAYLIST_LENGTH | 30s    | DASH 播放列表的长度  |
 | HV_LIVE_STAT                 | true   | 是否开启直播统计功能 |
 | HV_VOD_ENABLE                | true   | 是否开启点播功能     |
 | HV_VOD_HTTP_PORT             | 8802   | 点播 HTTP 端口       |
