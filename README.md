@@ -161,6 +161,14 @@
         # 001
         -c copy
         # 002
+        -c copy -use_template 0 -use_timeline 0
+        # 003
+        -c copy -use_template 1 -use_timeline 1
+        # 004
+        -c copy -use_template 1 -use_timeline 0
+        # 005
+        -c copy -use_template 0 -use_timeline 1
+        # 006
         -map 0:a -c:a aac -b:a 128k \
         -map 0:v -c:v:0 libx264 -b:v:0 5000k -s:v:0 1920x1080 -profile:v:0 baseline \
         -map 0:v -c:v:1 libx264 -b:v:1 2500k -s:v:1 1280x720 -profile:v:1 baseline \
