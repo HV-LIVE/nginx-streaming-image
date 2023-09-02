@@ -159,6 +159,8 @@
     [ENV_LIST]
     VOD_FFMPEG_DASH_OPTIONS =
         # 001
+        -c copy
+        # 002
         -map 0:a -c:a aac -b:a 128k \
         -map 0:v -c:v:0 libx264 -b:v:0 5000k -s:v:0 1920x1080 -profile:v:0 baseline \
         -map 0:v -c:v:1 libx264 -b:v:1 2500k -s:v:1 1280x720 -profile:v:1 baseline \
