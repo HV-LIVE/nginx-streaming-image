@@ -3,9 +3,6 @@ FROM alpine:3.18
 RUN echo -e "https://mirror.tuna.tsinghua.edu.cn/alpine/v3.18/main/\nhttps://mirror.tuna.tsinghua.edu.cn/alpine/v3.18/community/" > /etc/apk/repositories && \
     apk add --no-cache bash python3 py3-pip nginx nginx-mod-http-vod nginx-mod-rtmp ffmpeg
 
-# 暂不使用
-# RUN apk add --no-cache ffmpeg
-
 # 调试工具
 # RUN apk add --no-cache vim curl
 
