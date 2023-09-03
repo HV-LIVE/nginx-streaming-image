@@ -5,7 +5,7 @@ on_die() {
     echo "kill at $(date)" >>/tmp/ffmpeg-dash.log
     pkill -KILL -P $$
     # 仅清理文件不清理目录
-    rm -rf $outputDir/*/*/*
+    rm -rf $outputDir/$name/*/*
 }
 
 trap 'on_die' TERM
