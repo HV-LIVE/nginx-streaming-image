@@ -2,12 +2,15 @@
 set -o errexit
 
 on_die() {
+    echo "kill at $(date)" >>/tmp/ffmpeg-dash.log
     pkill -KILL -P $$
-    rm -rf "$outputDir"
+    # 仅清理文件不清理目录
+    rm -rf $outputDir/*/*/*
 }
 
 trap 'on_die' TERM
 
+echo "run at $(date)" >>/tmp/ffmpeg-dash.log
 name="$1"
 outputDir="/tmp/ffmpeg-dash/$name"
 rm -rf "$outputDir"
