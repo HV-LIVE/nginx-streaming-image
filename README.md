@@ -3,6 +3,12 @@
 - [nginx-rtmp-module](https://github.com/arut/nginx-rtmp-module)
 - [nginx-vod-module](https://github.com/kaltura/nginx-vod-module)
 
+# 编译镜像
+
+```
+docker build -t hvlive/nginx-streaming:latest .
+```
+
 # 功能
 
 - RTMP 协议直播推流与播放
@@ -31,11 +37,24 @@
 
 - 部署命令
 
-  ```bash
+  ```sh
+  # HTTP
   docker run -d --restart=always --name nginx-streaming \
           -p 1935:1935 -p 8801:8801 -p 8802:8802 \
           -v {点播资源目录}:/vod-res \
           -v {启动配置目录}:/etc/launcher \
+          hvlive/nginx-streaming:latest
+
+  # HTTPS
+  docker run -d --restart=always --name nginx-streaming \
+          -p 1935:1935 -p 8801:8801 -p 8802:8802 \
+          -v {点播资源目录}:/vod-res \
+          -v {启动配置目录}:/etc/launcher \
+          -v {host_cert_path}:{container_cert_path} \
+          -e HV_LIVE_HTTPS_CERT={container_cert_path}/{pem_file} \
+          -e HV_LIVE_HTTPS_CERT_KEY={container_cert_path}/{key_file} \
+          -e HV_VOD_HTTPS_CERT={container_cert_path}/{pem_file} \
+          -e HV_VOD_HTTPS_CERT_KEY={container_cert_path}/{key_file} \
           hvlive/nginx-streaming:latest
   ```
 
@@ -56,14 +75,14 @@
 
 - FFmpeg 推流命令
 
-  ```bash
+  ```sh
   # 推流本地视频文件
   ffmpeg -stream_loop -1 -re -i "{本地视频路径}" -c:v copy -c:a copy -f flv {rtmp_full_url}
   ```
 
 - FFmpeg 播放命令
 
-  ```bash
+  ```sh
   ffplay -fflags nobuffer {rtmp_full_url}
   ```
 
@@ -180,13 +199,13 @@
 
   - 进入容器
 
-    ```bash
+    ```sh
     docker exec -it {容器名称或id} bash
     ```
 
   - 容器内执行命令
 
-    ```bash
+    ```sh
     # 使配置文件生效
     cd /opt/launcher && python3 "/opt/launcher/setup.py"
 
@@ -206,19 +225,23 @@
 
 # 配置列表
 
-| 环境变量                     | 默认值 | 说明                 |
-| ---------------------------- | ------ | -------------------- |
-| HV_LIVE_ENABLE               | true   | 是否开启直播功能     |
-| HV_LIVE_RTMP_PORT            | 1935   | 直播 RTMP 端口       |
-| HV_LIVE_HTTP_PORT            | 8801   | 直播 HTTP 端口       |
-| HV_LIVE_HLS_FRAGMENT         | 10s    | HLS 分片的长度       |
-| HV_LIVE_HLS_PLAYLIST_LENGTH  | 40s    | HLS 播放列表的长度   |
-| HV_LIVE_DASH_FRAGMENT        | 2s     | DASH 分片的长度      |
-| HV_LIVE_DASH_PLAYLIST_LENGTH | 30s    | DASH 播放列表的长度  |
-| HV_LIVE_STAT                 | true   | 是否开启直播统计功能 |
-| HV_VOD_ENABLE                | true   | 是否开启点播功能     |
-| HV_VOD_HTTP_PORT             | 8802   | 点播 HTTP 端口       |
-| HV_VOD_STAT                  | true   | 是否开启点播统计功能 |
+| 环境变量                     | 默认值 | 说明                                                     |
+| ---------------------------- | ------ | -------------------------------------------------------- |
+| HV_LIVE_ENABLE               | true   | 是否开启直播功能                                         |
+| HV_LIVE_RTMP_PORT            | 1935   | 容器内的直播 RTMP 端口                                   |
+| HV_LIVE_HTTP_PORT            | 8801   | 容器内的直播 HTTP 端口                                   |
+| HV_LIVE_HTTPS_CERT           |        | 容器内的直播证书 pem 文件路径（指定后会开启 HTTPS 协议） |
+| HV_LIVE_HTTPS_CERT_KEY       |        | 容器内的直播证书 key 文件路径（指定后会开启 HTTPS 协议） |
+| HV_LIVE_HLS_FRAGMENT         | 10s    | HLS 分片的长度                                           |
+| HV_LIVE_HLS_PLAYLIST_LENGTH  | 40s    | HLS 播放列表的长度                                       |
+| HV_LIVE_DASH_FRAGMENT        | 2s     | DASH 分片的长度                                          |
+| HV_LIVE_DASH_PLAYLIST_LENGTH | 30s    | DASH 播放列表的长度                                      |
+| HV_LIVE_STAT                 | true   | 是否开启直播统计功能                                     |
+| HV_VOD_ENABLE                | true   | 是否开启点播功能                                         |
+| HV_VOD_HTTP_PORT             | 8802   | 容器内的点播 HTTP 端口                                   |
+| HV_VOD_HTTPS_CERT            |        | 容器内的点播证书 pem 文件路径（指定后会开启 HTTPS 协议） |
+| HV_VOD_HTTPS_CERT_KEY        |        | 容器内的点播证书 key 文件路径（指定后会开启 HTTPS 协议） |
+| HV_VOD_STAT                  | true   | 是否开启点播统计功能                                     |
 
 # 功能缺陷
 
@@ -235,5 +258,3 @@
 ## 点播不支持 `MPEG-TS` 格式
 
 - [参考问题](https://github.com/kaltura/nginx-vod-module/issues/1036)
-
-## 暂不支持 `HTTPS`
